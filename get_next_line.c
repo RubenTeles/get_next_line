@@ -12,6 +12,8 @@
 
 #include "get_next_line.h"
 
+#include <stdio.h>
+
 int	ft_putvar(char	**var, char *buffer, int bytesread, int fd)
 {
 	int				lenb;
@@ -33,7 +35,6 @@ int	ft_putvar(char	**var, char *buffer, int bytesread, int fd)
 		ft_strlcpy(temp + lenv, buffer, lenb + 1);
 		free(*var);
 		*var = temp;
-		return (1);
 	}
 	return (1);
 }
@@ -76,6 +77,8 @@ char	*get_next_line(int fd)
 	static char		*var;
 	int				i;
 
+	if (fd < 0 || BUFFER_SIZE <= 0)
+		return (0);
 	if (var == 0)
 	{
 		var = createvar(0, fd);

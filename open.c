@@ -51,6 +51,7 @@ int	main()
 	printf("\n4- str:%s", get_next_line(fd));
 	printf("\n5- str:%s", get_next_line(fd));
 	printf("\n6- str:%s", get_next_line(fd));
+	printf("\n");
 	return (0);
 }
 
