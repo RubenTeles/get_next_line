@@ -78,3 +78,20 @@ int	ft_countn(char *buffer)
 	}
 	return (n);
 }
+
+void	*ft_calloc(size_t num, size_t size)
+{
+	size_t	i;
+	char	*str;
+
+	i = 0;
+	str = (void *)malloc(num * size);
+	if (str == 0)
+		return (0);
+	while (i < num * size)
+	{
+		str[i] = 0;
+		i++;
+	}
+	return (str);
+}

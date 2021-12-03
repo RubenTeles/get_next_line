@@ -62,6 +62,7 @@ int	ft_strchr(const char *string, int c)
 		return (i);
 	return (i);
 }
+#include <stdio.h>
 
 int	ft_countn(char *buffer)
 {
@@ -70,11 +71,28 @@ int	ft_countn(char *buffer)
 
 	i = 0;
 	n = 0;
-	while (buffer[i])
+	while (buffer[i] != '\0')
 	{
 		if (buffer[i] == '\n')
 			n++;
 		i++;
 	}
 	return (n);
+}
+
+void	*ft_calloc(size_t num, size_t size)
+{
+	size_t	i;
+	char	*str;
+
+	i = 0;
+	str = (void *)malloc(num * size);
+	if (str == 0)
+		return (0);
+	while (i < num * size)
+	{
+		str[i] = 0;
+		i++;
+	}
+	return (str);
 }

@@ -34,28 +34,27 @@ char	*ft_putvar(char *buffer, int bytesread, int fd)
 	char	*str;
 	char	*temp;
 
-	printf("buffer:-%s-", buffer);
-
-	while (ft_countn(buffer) == 0 && bytesread > 0)
+	lenv = 0;
+	lenb = 0;
+	while ((ft_countn(buffer) == 0) && bytesread > 0)
 	{
-		ft_zerar(buffer);
 		bytesread = read(fd, buffer, BUFFER_SIZE);
 		if (bytesread <= 0);
 			return (0);
 		buffer[bytesread] = '\0';
 		lenb = ft_strchr(buffer, '\n');
-		if (str != NULL)
-			lenv = ft_strlen(str);
+		lenv = ft_strlen(str);
 		temp = (char *)malloc(sizeof(char) * (lenb + lenv + 1));
 		if (!temp)
 			return (0);
-		if (str != 0)
-			ft_strlcpy(temp, str, lenv + 1);
+		ft_strlcpy(temp, str, lenv + 1);
 		ft_strlcpy(temp + lenv, buffer, lenb + 1);
 		buffer + lenb +  1;
 		free(str);
 		str = temp;
+		printf("\nstr:-%s-", str);
 	}
+	printf("\nstr:-%s-", str);
 	return (str);
 }
 
@@ -76,18 +75,56 @@ int	ft_addvar(char	**var, int i)
 	return (1);
 }
 
-char	*createvar(int bytesread, int fd)
+char	*createvar(int bytesread, char *buffer, int fd)
 {
-	char	*var;
+	char	*str;
+	int		lenv;
 
-	var = (char *)malloc(sizeof(char) * (BUFFER_SIZE));
-	if (!var)
-		return (0);
-	bytesread = read(fd, var, BUFFER_SIZE);
-	if (bytesread <= 0)
-		return (0);
-	var[bytesread] = '\0';
-	return (var);
+	while ((ft_countn(buffer) == 0) && bytesread > 0)
+	{
+		ft_zerar(buffer);
+		bytesread = read(fd, buffer, BUFFER_SIZE);
+		if (bytesread <= 0)
+			return (0);
+		buffer[bytesread] = '\0';
+		if (str == 0)
+		{
+			str = malloc(sizeof(char) * (bytesread + 1));
+			ft_strlcpy(str, buffer, bytesread + 1);
+		}	
+	}
+	return (str);
+}
+
+char	*first(int bytesread, char *buffer, int fd)
+{
+	char	*str;
+	int	i = 0;
+
+//	printf("\nSTARTbufer:-%s-", buffer);
+	while (i < 2)
+	{
+			printf("N:-%d- ", i);
+		ft_zerar(buffer);
+		bytesread = read(fd, buffer, BUFFER_SIZE);
+		if (bytesread <= 0)
+			return (0);
+		buffer[bytesread] = '\0';
+		ft_countn(buffer);
+		i++;
+	}
+				printf("\nACABOUUUUUU\n");
+
+	/*while (ft_countn(buffer) == 0 && bytesread > 0)
+	{
+		ft_zerar(buffer);
+		bytesread = read(fd, buffer, BUFFER_SIZE);
+		if (bytesread <= 0)
+			return (0);
+		buffer[bytesread] = '\0';
+	}*/
+//	printf("\nENDbufer:-%s-", buffer);
+	return (buffer);
 }
 
 char	*get_next_line(int fd)
@@ -95,6 +132,10 @@ char	*get_next_line(int fd)
 	static char	buffer[1024][BUFFER_SIZE + 1];
 	char		*str;
 
+	printf("\nXXXXstr:-%s-", buffer[fd]);
+
+/*	str = first(1, buffer[fd], fd);
+	str = createvar(1, buffer[fd], fd);*/
 	str = ft_putvar(buffer[fd], 1, fd);
 	return (str);
 }

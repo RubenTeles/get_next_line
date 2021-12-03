@@ -25,5 +25,6 @@ size_t	ft_strlen(const char *s);
 size_t	ft_strlcpy(char *dest, char *src, size_t size);
 int		ft_countn(char *buffer);
 int		ft_strchr(const char *string, int c);
+void	*ft_calloc(size_t num, size_t size);
 
 #endif

@@ -20,7 +20,7 @@ int	ft_putvar(char	**var, char *buffer, int bytesread, int fd)
 	int				lenv;
 	char			*temp;
 
-	while (ft_countn(*var) >= 0 && bytesread > 0)
+	while (ft_countn(*var) == 0 && bytesread > 0)
 	{
 		bytesread = read(fd, buffer, BUFFER_SIZE);
 		if (bytesread <= 0 && *var[0] == '\0')
@@ -56,11 +56,11 @@ int	ft_addvar(char	**var, int i)
 	return (1);
 }
 
-char	*createvar(int bytesread, int fd)
+char	*ft_createvar(int bytesread, int fd)
 {
 	char	*var;
 
-	var = (char *)malloc(sizeof(char) * (BUFFER_SIZE));
+	var = malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	if (!var)
 		return (0);
 	bytesread = read(fd, var, BUFFER_SIZE);
@@ -70,6 +70,8 @@ char	*createvar(int bytesread, int fd)
 	return (var);
 }
 
+
+
 char	*get_next_line(int fd)
 {
 	char			buffer[BUFFER_SIZE + 1];
@@ -77,11 +79,11 @@ char	*get_next_line(int fd)
 	static char		*var;
 	int				i;
 
-	if (fd < 0 || BUFFER_SIZE <= 0)
+	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
 		return (0);
 	if (var == 0)
 	{
-		var = createvar(0, fd);
+		var = ft_createvar(0, fd);
 		if (!var)
 			return (0);
 	}
