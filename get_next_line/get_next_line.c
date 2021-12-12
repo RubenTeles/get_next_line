@@ -11,33 +11,46 @@
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+#include <stdio.h>
 
-/*char	*upbuffer(char	*buffer)
+int	ft_zerobuffer(char	*buffer)
+{
+	long long int	i;
+
+	i = 0;
+	while (i < BUFFER_SIZE)
+	{
+		buffer[i] = 0;
+		i++;
+	}
+	return (0);
+}
+
+char	*upbuffer(char	*buffer)
 {
 	int		lenbf;
 	int		len;
-	char	*temp;
 
 	lenbf = ft_strchr(buffer, '\n');
-	len = ft_strlen(&buffer[lenbf + 1]);
-	temp = malloc(sizeof(char) * len + 1);
-	ft_strlcpy(temp, &buffer[len], len + 1);
-	return (&temp[0]);
-}*/
-
-char	*changebuffer(char	*buffer)
-{
-	int		lenbf;
-	int		len;
-	char	*temp;
-
-	lenbf = ft_strchr(buffer, '\n');
-	len = ft_strlen(&buffer[lenbf + 1]);
-	temp = malloc(sizeof(char) * len + 1);
-	ft_strlcpy(temp, &buffer[len], len + 1);
-	ft_calloc(sizeof(char), BUFFER_SIZE + 1);
-	ft_strlcpy(buffer, temp, len + 1);
+	len = ft_strlen(&buffer[lenbf]);
+	ft_strlcpy(buffer, &buffer[lenbf], len + 1);
+	ft_zerobuffer(&buffer[len + 1]);
 	return (buffer);
+}
+
+char	*old(char	*buffer)
+{
+	char	*str;
+	int		len;
+
+	str = ft_calloc(sizeof(char), 1);
+	if (!str)
+		return (0);
+	len = ft_strchr(buffer, '\n');
+	str = malloc(sizeof(char) * (len + 1));
+	ft_strlcpy(str, buffer, len + 1);
+	upbuffer(buffer);
+	return (str);
 }
 
 char	*new(char *buffer, int fd, int bytesread)
@@ -54,8 +67,10 @@ char	*new(char *buffer, int fd, int bytesread)
 	while (ft_countn(buffer) == 0 && bytesread > 0)
 	{
 		bytesread = read(fd, buffer, BUFFER_SIZE);
-		if (bytesread <= 0)
+		if (bytesread <= 0 || bytesread == 0 && str[0] == '\0')
 			return (0);
+		else if (bytesread == 0)
+			break ;
 		lenstr = ft_strlen(str);
 		lenbf = ft_strchr(buffer, '\n');
 		temp = malloc(sizeof(char) * (lenbf + lenstr + 1));
@@ -64,6 +79,7 @@ char	*new(char *buffer, int fd, int bytesread)
 		free(str);
 		str = temp;
 	}
+	upbuffer(buffer);
 	return (str);
 }
 
@@ -72,6 +88,9 @@ char	*get_next_line(int fd)
 	static char	buffer[1024][BUFFER_SIZE + 1];
 	char		*str;
 
-	str = new(buffer[fd], fd, 1);
+	if (buffer[fd][0] != '\0')
+		str = old(buffer[fd]);
+	else if (ft_countn(buffer[fd]) == 0)
+		str = new(buffer[fd], fd, 1);
 	return (str);
 }
