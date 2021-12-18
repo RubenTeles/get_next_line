@@ -38,32 +38,25 @@ char	*upbuffer(char	*buffer)
 	return (buffer);
 }
 
-char	*old(char	*buffer)
+char	*old(char	*buffer, char *str)
 {
-	char	*str;
 	int		len;
 
-	str = ft_calloc(sizeof(char), 1);
-	if (!str)
-		return (0);
 	len = ft_strchr(buffer, '\n');
+	free(str);
 	str = malloc(sizeof(char) * (len + 1));
 	ft_strlcpy(str, buffer, len + 1);
 	upbuffer(buffer);
 	return (str);
 }
 
-char	*new(char *buffer, int fd, int bytesread)
+char	*new(char *buffer, int fd, int bytesread, char *str)
 {
 	int		i;
-	char	*str;
 	char	*temp;
 	int		lenbf;
 	int		lenstr;
 
-	str = ft_calloc(sizeof(char), 1);
-	if (!str)
-		return (0);
 	while (ft_countn(buffer) == 0 && bytesread > 0)
 	{
 		bytesread = read(fd, buffer, BUFFER_SIZE);
@@ -88,9 +81,12 @@ char	*get_next_line(int fd)
 	static char	buffer[1024][BUFFER_SIZE + 1];
 	char		*str;
 
+	str = ft_calloc(sizeof(char), 1);
+	if (!str)
+		return (0);
 	if (buffer[fd][0] != '\0')
-		str = old(buffer[fd]);
+		str = old(buffer[fd], str);
 	else if (ft_countn(buffer[fd]) == 0)
-		str = new(buffer[fd], fd, 1);
+		str = new(buffer[fd], fd, 1, str);
 	return (str);
 }
