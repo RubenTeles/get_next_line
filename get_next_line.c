@@ -6,7 +6,7 @@
 /*   By: rteles <rteles@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/16 21:53:35 by rteles            #+#    #+#             */
-/*   Updated: 2021/12/29 22:45:17 by rteles           ###   ########.fr       */
+/*   Updated: 2021/12/29 22:58:14 by rteles           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,32 +63,29 @@ char	*ft_temp(char *buffer, char *str, int size, int len)
 	return (str);
 }
 
-char	*ft_str(char *buffer, char *str, int fd, int size)
-{
-	int		in;
-	int		len;
-
-	in = 0;
-	len = 0;
-	while (in == size && isline(str) == 0)
-	{
-		size = ft_size(buffer, fd);
-		if (size <= 0)
-			return (str);
-		in = ft_countn(buffer);
-		len += in;
-		str = ft_temp(buffer, str, size, len);
-	}
-	return (str);
-}
-
 char	*get_next_line(int fd)
 {
 	static char	buffer[1024][BUFFER_SIZE + 1];
 	char		*str;
+	int			in;
+	int			len;
+	int			size;
 
+	if (fd < 0 || BUFFER_SIZE <= 0)
+		return (0);
 	str = NULL;
-	str = ft_str(buffer[fd], str, fd, 0);
+	in = 0;
+	size = 0;
+	len = 0;
+	while (in == size && isline(str) == 0)
+	{
+		size = ft_size(buffer[fd], fd);
+		if (size <= 0)
+			return (str);
+		in = ft_countn(buffer[fd]);
+		len += in;
+		str = ft_temp(buffer[fd], str, size, len);
+	}
 	return (str);
 }
 
