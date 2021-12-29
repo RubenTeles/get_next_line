@@ -1,130 +1,85 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line3.c                                   :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rteles <rteles@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/16 21:53:35 by rteles            #+#    #+#             */
-/*   Updated: 2021/11/25 22:18:49 by rteles           ###   ########.fr       */
+/*   Updated: 2021/12/29 22:38:05 by rteles           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line_bonus.h"
 
-#include <stdio.h>
-
-int ft_zerar(char *buffer)
+int	ft_size(char *buffer, int fd)
 {
-	int	i;
-
-	i = 0;
-	while (i <= BUFFER_SIZE)
-	{
-		buffer[i] = 0;
-		i++;
-	}
-	return (0);
+	if (buffer[0] == 0)
+		return (read(fd, buffer, BUFFER_SIZE));
+	return (ft_strlen(buffer));
 }
 
-char	*ft_putvar(char *buffer, int bytesread, int fd)
+char	*ft_buffer(char	*buffer, char *temp, int lstr, int size)
 {
-	int		lenb;
-	int		lenv;
-	char	*str;
-	char	*temp;
+	int	a;
+	int	z;
+	int	in;
+	int	len;
 
-	lenv = 0;
-	lenb = 0;
-	while ((ft_countn(buffer) == 0) && bytesread > 0)
+	in = ft_countn(buffer);
+	a = 0;
+	z = 0;
+	len = lstr + in;
+	while (a < size)
 	{
-		bytesread = read(fd, buffer, BUFFER_SIZE);
-		if (bytesread <= 0);
-			return (0);
-		buffer[bytesread] = '\0';
-		lenb = ft_strchr(buffer, '\n');
-		lenv = ft_strlen(str);
-		temp = (char *)malloc(sizeof(char) * (lenb + lenv + 1));
-		if (!temp)
-			return (0);
-		ft_strlcpy(temp, str, lenv + 1);
-		ft_strlcpy(temp + lenv, buffer, lenb + 1);
-		buffer + lenb +  1;
-		free(str);
-		str = temp;
-		printf("\nstr:-%s-", str);
+		if (a < in)
+			temp[a + lstr] = buffer[a];
+		else
+			buffer[z++] = buffer[a];
+		buffer[a++] = 0;
 	}
-	printf("\nstr:-%s-", str);
-	return (str);
+	temp[len] = '\0';
+	return (temp);
 }
 
-int	ft_addvar(char	**var, int i)
+char	*ft_temp(char *buffer, char *str, int size, int len)
 {
-	int		lenv;
-	int		len;
+	int		lstr;
 	char	*temp;
 
-	lenv = ft_strlen(*var);
-	len = lenv - i;
-	temp = (char *)malloc(sizeof(char) * (len + 1));
+	lstr = 0;
+	temp = malloc(sizeof(char) * len + 1);
 	if (!temp)
-		return (0);
-	ft_strlcpy(temp, *var + i, len + 1);
-	free(*var);
-	*var = temp;
-	return (1);
-}
-
-char	*createvar(int bytesread, char *buffer, int fd)
-{
-	char	*str;
-	int		lenv;
-
-	while ((ft_countn(buffer) == 0) && bytesread > 0)
+		return (str);
+	if (str != NULL)
 	{
-		ft_zerar(buffer);
-		bytesread = read(fd, buffer, BUFFER_SIZE);
-		if (bytesread <= 0)
-			return (0);
-		buffer[bytesread] = '\0';
-		if (str == 0)
-		{
-			str = malloc(sizeof(char) * (bytesread + 1));
-			ft_strlcpy(str, buffer, bytesread + 1);
-		}	
+		lstr = len - ft_countn(buffer);
+		ft_strlcpy(temp, str, lstr + 1);
 	}
+	temp = ft_buffer(buffer, temp, lstr, size);
+	if (str != NULL)
+		free(str);
+	str = temp;
 	return (str);
 }
 
-char	*first(int bytesread, char *buffer, int fd)
+char	*ft_str(char *buffer, char *str, int fd, int size)
 {
-	char	*str;
-	int	i = 0;
+	int		in;
+	int		len;
 
-//	printf("\nSTARTbufer:-%s-", buffer);
-	while (i < 2)
+	in = 0;
+	len = 0;
+	while (in == size && isline(str) == 0)
 	{
-			printf("N:-%d- ", i);
-		ft_zerar(buffer);
-		bytesread = read(fd, buffer, BUFFER_SIZE);
-		if (bytesread <= 0)
-			return (0);
-		buffer[bytesread] = '\0';
-		ft_countn(buffer);
-		i++;
+		size = ft_size(buffer, fd);
+		if (size <= 0)
+			return (str);
+		in = ft_countn(buffer);
+		len += in;
+		str = ft_temp(buffer, str, size, len);
 	}
-				printf("\nACABOUUUUUU\n");
-
-	/*while (ft_countn(buffer) == 0 && bytesread > 0)
-	{
-		ft_zerar(buffer);
-		bytesread = read(fd, buffer, BUFFER_SIZE);
-		if (bytesread <= 0)
-			return (0);
-		buffer[bytesread] = '\0';
-	}*/
-//	printf("\nENDbufer:-%s-", buffer);
-	return (buffer);
+	return (str);
 }
 
 char	*get_next_line(int fd)
@@ -132,10 +87,7 @@ char	*get_next_line(int fd)
 	static char	buffer[1024][BUFFER_SIZE + 1];
 	char		*str;
 
-	printf("\nXXXXstr:-%s-", buffer[fd]);
-
-/*	str = first(1, buffer[fd], fd);
-	str = createvar(1, buffer[fd], fd);*/
-	str = ft_putvar(buffer[fd], 1, fd);
+	str = NULL;
+	str = ft_str(buffer[fd], str, fd, 0);
 	return (str);
 }

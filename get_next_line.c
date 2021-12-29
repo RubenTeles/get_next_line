@@ -6,99 +6,133 @@
 /*   By: rteles <rteles@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/16 21:53:35 by rteles            #+#    #+#             */
-/*   Updated: 2021/11/25 23:43:13 by rteles           ###   ########.fr       */
+/*   Updated: 2021/12/29 22:45:17 by rteles           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-#include <stdio.h>
-
-int	ft_putvar(char	**var, char *buffer, int bytesread, int fd)
+int	ft_size(char *buffer, int fd)
 {
-	int				lenb;
-	int				lenv;
-	char			*temp;
-
-	while (ft_countn(*var) == 0 && bytesread > 0)
-	{
-		bytesread = read(fd, buffer, BUFFER_SIZE);
-		if (bytesread <= 0 && *var[0] == '\0')
-			return (0);
-		buffer[bytesread] = '\0';
-		lenb = ft_strlen(buffer);
-		lenv = ft_strlen(*var);
-		temp = (char *)malloc(sizeof(char) * (lenb + lenv + 1));
-		if (!temp)
-			return (0);
-		ft_strlcpy(temp, *var, lenv + 1);
-		ft_strlcpy(temp + lenv, buffer, lenb + 1);
-		free(*var);
-		*var = temp;
-	}
-	return (1);
+	if (buffer[0] == 0)
+		return (read(fd, buffer, BUFFER_SIZE));
+	return (ft_strlen(buffer));
 }
 
-int	ft_addvar(char	**var, int i)
+char	*ft_buffer(char	*buffer, char *temp, int lstr, int size)
 {
-	int		lenv;
-	int		len;
+	int	a;
+	int	z;
+	int	in;
+	int	len;
+
+	in = ft_countn(buffer);
+	a = 0;
+	z = 0;
+	len = lstr + in;
+	while (a < size)
+	{
+		if (a < in)
+			temp[a + lstr] = buffer[a];
+		else
+			buffer[z++] = buffer[a];
+		buffer[a++] = 0;
+	}
+	temp[len] = '\0';
+	return (temp);
+}
+
+char	*ft_temp(char *buffer, char *str, int size, int len)
+{
+	int		lstr;
 	char	*temp;
 
-	lenv = ft_strlen(*var);
-	len = lenv - i;
-	temp = (char *)malloc(sizeof(char) * (len + 1));
+	lstr = 0;
+	temp = malloc(sizeof(char) * len + 1);
 	if (!temp)
-		return (0);
-	ft_strlcpy(temp, *var + i, len + 1);
-	free(*var);
-	*var = temp;
-	return (1);
+		return (str);
+	if (str != NULL)
+	{
+		lstr = len - ft_countn(buffer);
+		ft_strlcpy(temp, str, lstr + 1);
+	}
+	temp = ft_buffer(buffer, temp, lstr, size);
+	if (str != NULL)
+		free(str);
+	str = temp;
+	return (str);
 }
 
-char	*ft_createvar(int bytesread, int fd)
+char	*ft_str(char *buffer, char *str, int fd, int size)
 {
-	char	*var;
+	int		in;
+	int		len;
 
-	var = malloc(sizeof(char) * (BUFFER_SIZE + 1));
-	if (!var)
-		return (0);
-	bytesread = read(fd, var, BUFFER_SIZE);
-	if (bytesread <= 0)
-		return (0);
-	var[bytesread] = '\0';
-	return (var);
+	in = 0;
+	len = 0;
+	while (in == size && isline(str) == 0)
+	{
+		size = ft_size(buffer, fd);
+		if (size <= 0)
+			return (str);
+		in = ft_countn(buffer);
+		len += in;
+		str = ft_temp(buffer, str, size, len);
+	}
+	return (str);
 }
-
-
 
 char	*get_next_line(int fd)
 {
-	char			buffer[BUFFER_SIZE + 1];
-	char			*str;
-	static char		*var;
-	int				i;
+	static char	buffer[1024][BUFFER_SIZE + 1];
+	char		*str;
 
-	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
-		return (0);
-	if (var == 0)
-	{
-		var = ft_createvar(0, fd);
-		if (!var)
-			return (0);
-	}
-	if (ft_putvar(&var, buffer, 1, fd) == 0)
-		return (0);
-	i = ft_strchr(var, '\n');
-	str = (char *)malloc(sizeof(char) * (i + 1));
-	if (!str)
-		return (0);
-	ft_strlcpy(str, var, i + 1);
-	if (i == 0)
-		i = 1;
-	else if (var[i + 1] != '\0')
-		i++;
-	if (ft_addvar(&var, i) == 0)
-		return (0);
+	str = NULL;
+	str = ft_str(buffer[fd], str, fd, 0);
 	return (str);
 }
+
+/*char	*ft_str(char *buffer, char *str, int fd, int size){
+	int		in;
+	int		len;
+	int		a;
+	int		z;
+	int		lstr;
+	char	*temp;
+
+	in = 0;
+	len = 0;
+	lstr = 0;
+	temp = NULL;
+	while (in == size && isline(str) == 0)
+	{
+		size = ft_size(buffer, fd);
+		if (size <= 0)
+			return (str);
+		in = ft_countn(buffer);
+		len += in;
+		temp = malloc(sizeof(char) * len + 1);
+		if (!temp)
+			return (str);
+		if (str != NULL)
+		{
+			lstr = len - in;
+			ft_strlcpy(temp, str, lstr + 1);
+		}
+		z = 0;
+		a = 0;
+		while (a < size)
+		{
+			if (a < in)
+				temp[a + lstr] = buffer[a];
+			else
+				buffer[z++] = buffer[a];
+			buffer[a++] = 0;
+		}
+		temp[len] = '\0';
+		if (str != NULL)
+			free(str);
+		str = temp;
+	}
+	return (str);
+}*/

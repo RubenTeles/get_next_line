@@ -6,7 +6,7 @@
 /*   By: rteles <rteles@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/16 21:50:30 by rteles            #+#    #+#             */
-/*   Updated: 2021/11/25 23:31:06 by rteles           ###   ########.fr       */
+/*   Updated: 2021/12/29 22:04:18 by rteles           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,10 @@
 #  define BUFFER_SIZE 42
 # endif
 
+int		ft_countn(char *buffer);
+int		isline(char *str);
 char	*get_next_line(int fd);
 size_t	ft_strlen(const char *s);
 size_t	ft_strlcpy(char *dest, char *src, size_t size);
-int		ft_countn(char *buffer);
-int		ft_strchr(const char *string, int c);
 
 #endif

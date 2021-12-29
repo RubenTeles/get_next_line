@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line_utils.c                              :+:      :+:    :+:   */
+/*   get_next_line_utils_bonus.c                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rteles <rteles@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/20 23:56:44 by rteles            #+#    #+#             */
-/*   Updated: 2021/11/25 22:17:54 by rteles           ###   ########.fr       */
+/*   Updated: 2021/12/29 22:37:47 by rteles           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,54 +45,32 @@ size_t	ft_strlcpy(char *dest, char *src, size_t size)
 	return (i);
 }
 
-int	ft_strchr(const char *string, int c)
-{
-	int		i;
-	char	*rtstr;
-
-	i = 0;
-	rtstr = (char *)string;
-	while (rtstr[i])
-	{
-		if (rtstr[i] == (unsigned char)c)
-			return (i);
-		i++;
-	}
-	if (rtstr[i] == c)
-		return (i);
-	return (i);
-}
-#include <stdio.h>
-
 int	ft_countn(char *buffer)
 {
 	int	i;
-	int	n;
 
 	i = 0;
-	n = 0;
-	while (buffer[i] != '\0')
+	while (buffer[i])
 	{
 		if (buffer[i] == '\n')
-			n++;
+			return (i + 1);
 		i++;
 	}
-	return (n);
+	return (i);
 }
 
-void	*ft_calloc(size_t num, size_t size)
+int	isline(char *str)
 {
-	size_t	i;
-	char	*str;
+	int	i;
 
 	i = 0;
-	str = (void *)malloc(num * size);
-	if (str == 0)
+	if (str == NULL)
 		return (0);
-	while (i < num * size)
+	while (str[i])
 	{
-		str[i] = 0;
+		if (str[i] == '\n')
+			return (1);
 		i++;
 	}
-	return (str);
+	return (0);
 }
