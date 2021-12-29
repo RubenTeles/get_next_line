@@ -6,7 +6,7 @@
 /*   By: rteles <rteles@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/16 21:53:35 by rteles            #+#    #+#             */
-/*   Updated: 2021/12/29 22:58:14 by rteles           ###   ########.fr       */
+/*   Updated: 2021/12/29 23:02:07 by rteles           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int	ft_size(char *buffer, int fd)
 	return (ft_strlen(buffer));
 }
 
-char	*ft_buffer(char	*buffer, char *temp, int lstr, int size)
+char	*ft_temp(char	*buffer, char *temp, int lstr, int size)
 {
 	int	a;
 	int	z;
@@ -42,7 +42,7 @@ char	*ft_buffer(char	*buffer, char *temp, int lstr, int size)
 	return (temp);
 }
 
-char	*ft_temp(char *buffer, char *str, int size, int len)
+char	*ft_str(char *buffer, char *str, int size, int len)
 {
 	int		lstr;
 	char	*temp;
@@ -56,7 +56,7 @@ char	*ft_temp(char *buffer, char *str, int size, int len)
 		lstr = len - ft_countn(buffer);
 		ft_strlcpy(temp, str, lstr + 1);
 	}
-	temp = ft_buffer(buffer, temp, lstr, size);
+	temp = ft_temp(buffer, temp, lstr, size);
 	if (str != NULL)
 		free(str);
 	str = temp;
@@ -84,52 +84,7 @@ char	*get_next_line(int fd)
 			return (str);
 		in = ft_countn(buffer[fd]);
 		len += in;
-		str = ft_temp(buffer[fd], str, size, len);
+		str = ft_str(buffer[fd], str, size, len);
 	}
 	return (str);
 }
-
-/*char	*ft_str(char *buffer, char *str, int fd, int size){
-	int		in;
-	int		len;
-	int		a;
-	int		z;
-	int		lstr;
-	char	*temp;
-
-	in = 0;
-	len = 0;
-	lstr = 0;
-	temp = NULL;
-	while (in == size && isline(str) == 0)
-	{
-		size = ft_size(buffer, fd);
-		if (size <= 0)
-			return (str);
-		in = ft_countn(buffer);
-		len += in;
-		temp = malloc(sizeof(char) * len + 1);
-		if (!temp)
-			return (str);
-		if (str != NULL)
-		{
-			lstr = len - in;
-			ft_strlcpy(temp, str, lstr + 1);
-		}
-		z = 0;
-		a = 0;
-		while (a < size)
-		{
-			if (a < in)
-				temp[a + lstr] = buffer[a];
-			else
-				buffer[z++] = buffer[a];
-			buffer[a++] = 0;
-		}
-		temp[len] = '\0';
-		if (str != NULL)
-			free(str);
-		str = temp;
-	}
-	return (str);
-}*/
